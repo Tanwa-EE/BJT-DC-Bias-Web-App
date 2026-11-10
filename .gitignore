@@ -1,0 +1,20 @@
+# Python / Flask
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Secrets — ห้าม commit
+.env
+.env.*
+*.pem
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Superpowers scratch (ledger/briefs)
+.superpowers/
