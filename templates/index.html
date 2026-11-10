@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BJT DC Bias Calculator | ENG29 2121</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="page-head">
+    <h1>เครื่องคำนวณ DC Bias — BJT Common Emitter (Voltage Divider)</h1>
+    <p>ENG29 2121 · Lab 02 · คำนวณด้วย Python ผ่าน Flask Backend</p>
+  </header>
+
+  <main class="layout">
+    <section class="card">
+      <h2>ค่าอุปกรณ์</h2>
+      <form method="post" action="/">
+        <div class="field-row">
+          <label for="vcc">VCC <span class="hint">แรงดันแหล่งจ่าย</span></label>
+          <input type="number" id="vcc" name="vcc" step="any" min="0" value="{{ values.vcc }}">
+          <span class="hint">V</span>
+        </div>
+
+        <div class="field-row">
+          <label for="r1">R1 <span class="hint">ตัวต้านทานฝั่ง Base ไป VCC</span></label>
+          <input type="number" id="r1" name="r1" step="any" min="0" value="{{ values.r1 }}">
+          <select name="unit_r1" aria-label="หน่วยของ R1">
+            <option value="kohm" {% if values.unit_r1 == 'kohm' %}selected{% endif %}>kΩ</option>
+            <option value="ohm" {% if values.unit_r1 == 'ohm' %}selected{% endif %}>Ω</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label for="r2">R2 <span class="hint">ตัวต้านทานฝั่ง Base ไป Ground</span></label>
+          <input type="number" id="r2" name="r2" step="any" min="0" value="{{ values.r2 }}">
+          <select name="unit_r2" aria-label="หน่วยของ R2">
+            <option value="kohm" {% if values.unit_r2 == 'kohm' %}selected{% endif %}>kΩ</option>
+            <option value="ohm" {% if values.unit_r2 == 'ohm' %}selected{% endif %}>Ω</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label for="rc">RC <span class="hint">ตัวต้านทาน Collector</span></label>
+          <input type="number" id="rc" name="rc" step="any" min="0" value="{{ values.rc }}">
+          <select name="unit_rc" aria-label="หน่วยของ RC">
+            <option value="kohm" {% if values.unit_rc == 'kohm' %}selected{% endif %}>kΩ</option>
+            <option value="ohm" {% if values.unit_rc == 'ohm' %}selected{% endif %}>Ω</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label for="re">RE <span class="hint">ตัวต้านทาน Emitter</span></label>
+          <input type="number" id="re" name="re" step="any" min="0" value="{{ values.re }}">
+          <select name="unit_re" aria-label="หน่วยของ RE">
+            <option value="kohm" {% if values.unit_re == 'kohm' %}selected{% endif %}>kΩ</option>
+            <option value="ohm" {% if values.unit_re == 'ohm' %}selected{% endif %}>Ω</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label for="beta">β <span class="hint">อัตราขยายกระแส (hFE)</span></label>
+          <input type="number" id="beta" name="beta" step="any" min="0" value="{{ values.beta }}">
+          <span class="hint">—</span>
+        </div>
+
+        <div class="field-row">
+          <label for="vbe">VBE <span class="hint">แรงดัน Base–Emitter</span></label>
+          <input type="number" id="vbe" name="vbe" step="any" min="0" value="{{ values.vbe }}">
+          <span class="hint">V</span>
+        </div>
+
+        <button type="submit">Calculate DC Bias</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>วงจร Voltage-Divider Bias</h2>
+      <figure class="schematic">
+        <svg viewBox="0 0 340 400" role="img" aria-label="วงจร NPN Common Emitter แบบ Voltage Divider Bias">
+          <g stroke="#2c4a63" stroke-width="2" fill="none" stroke-linecap="round">
+            <line x1="40" y1="30" x2="260" y2="30"/>
+            <line x1="40" y1="370" x2="260" y2="370"/>
+
+            <line x1="110" y1="30" x2="110" y2="45"/>
+            <rect x="100" y="45" width="20" height="55" fill="#fff"/>
+            <line x1="110" y1="100" x2="110" y2="190"/>
+            <line x1="110" y1="190" x2="160" y2="190"/>
+
+            <line x1="110" y1="190" x2="110" y2="250"/>
+            <rect x="100" y="250" width="20" height="55" fill="#fff"/>
+            <line x1="110" y1="305" x2="110" y2="370"/>
+
+            <line x1="160" y1="160" x2="160" y2="220"/>
+            <line x1="160" y1="172" x2="200" y2="145"/>
+            <line x1="200" y1="145" x2="200" y2="100"/>
+            <rect x="190" y="45" width="20" height="55" fill="#fff"/>
+            <line x1="200" y1="45" x2="200" y2="30"/>
+
+            <line x1="160" y1="208" x2="200" y2="235"/>
+            <line x1="200" y1="235" x2="200" y2="245"/>
+            <rect x="190" y="245" width="20" height="55" fill="#fff"/>
+            <line x1="200" y1="300" x2="200" y2="370"/>
+
+            <line x1="188" y1="378" x2="212" y2="378"/>
+            <line x1="194" y1="386" x2="206" y2="386"/>
+          </g>
+          <circle cx="110" cy="190" r="3.5" fill="#2c4a63"/>
+          <polygon points="197,233 184,231 191,222" fill="#2c4a63"/>
+          <g font-family="Tahoma, sans-serif" font-size="13" fill="#24425b">
+            <text x="26" y="24">VCC</text>
+            <text x="128" y="78">R1</text>
+            <text x="128" y="283">R2</text>
+            <text x="218" y="78">RC</text>
+            <text x="218" y="278">RE</text>
+            <text x="250" y="380">GND</text>
+            <text x="150" y="150">Q1</text>
+          </g>
+        </svg>
+      </figure>
+      <p class="note">แบบจำลอง Forward-Active: β และ VBE คงที่ ไม่ใช่การจำลอง SPICE</p>
+    </section>
+  </main>
+</body>
+</html>
