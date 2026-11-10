@@ -15,6 +15,14 @@
   <main class="layout">
     <section class="card">
       <h2>ค่าอุปกรณ์</h2>
+      {% if errors %}
+      <div class="alert alert-error">
+        <strong>ไม่สามารถคำนวณได้</strong>
+        <ul>
+          {% for message in errors %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
       <form method="post" action="/">
         <div class="field-row">
           <label for="vcc">VCC <span class="hint">แรงดันแหล่งจ่าย</span></label>
@@ -120,6 +128,46 @@
       </figure>
       <p class="note">แบบจำลอง Forward-Active: β และ VBE คงที่ ไม่ใช่การจำลอง SPICE</p>
     </section>
+
+    {% if result %}
+    <section class="card results-card">
+      <h2>ผลลัพธ์ DC Bias</h2>
+
+      {% if result.region == "active" %}
+      <span class="region-badge region-active">Active Region</span>
+      {% elif result.region == "cutoff" %}
+      <span class="region-badge region-cutoff">Cutoff</span>
+      {% else %}
+      <span class="region-badge region-saturation">Saturation</span>
+      {% endif %}
+
+      {% if result.warnings %}
+      <div class="alert alert-warning">
+        <strong>ข้อจำกัดของแบบจำลอง</strong>
+        <ul>
+          {% for message in result.warnings %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <table class="results">
+        <tbody>
+          <tr><th>VTH (แรงดันเทียบเท่าที่ Base)</th><td class="value">{{ "%.3f"|format(result.vth) }} V</td></tr>
+          <tr><th>RTH (ความต้านทานเทียบเท่า)</th><td class="value">{{ "%.3f"|format(result.rth / 1000) }} kΩ</td></tr>
+          <tr><th>VB (แรงดัน Base)</th><td class="value">{{ "%.3f"|format(result.vb) }} V</td></tr>
+          <tr><th>VE (แรงดัน Emitter)</th><td class="value">{{ "%.3f"|format(result.ve) }} V</td></tr>
+          <tr><th>VC (แรงดัน Collector)</th><td class="value">{{ "%.3f"|format(result.vc) }} V</td></tr>
+          <tr><th>VCE (แรงดัน Collector–Emitter)</th><td class="value">{{ "%.3f"|format(result.vce) }} V</td></tr>
+          <tr><th>IC (กระแส Collector)</th><td class="value">{{ "%.3f"|format(result.ic * 1000) }} mA</td></tr>
+          <tr><th>IB (กระแส Base)</th><td class="value">{{ "%.3f"|format(result.ib * 1000000) }} µA</td></tr>
+          <tr><th>IE (กระแส Emitter)</th><td class="value">{{ "%.3f"|format(result.ie * 1000) }} mA</td></tr>
+          {% if result.region == "saturation" %}
+          <tr><th>IC(sat) (กระแสอิ่มตัวสูงสุด)</th><td class="value">{{ "%.3f"|format(result.ic_sat * 1000) }} mA</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </section>
+    {% endif %}
   </main>
 </body>
 </html>
